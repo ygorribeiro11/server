@@ -1,0 +1,12 @@
+version: '3'
+services:
+  server:
+    image: yribeiro/apache
+    build: Dockerfile
+    ports:
+        - "80:80"
+networks:
+  front:
+    driver: bridge
+    ipam:
+      driver: default
