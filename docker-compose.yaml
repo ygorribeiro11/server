@@ -9,6 +9,7 @@ services:
   nexus:
     image: sonatype/nexus3
     container_name: "nexus"
+    command: ["sh", "-c", "chown -R 200:200 ./nexus-data"]
     volumes:
       - "./nexus-data:/nexus-data"
     ports:
