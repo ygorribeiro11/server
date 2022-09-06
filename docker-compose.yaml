@@ -6,17 +6,56 @@ services:
     build: Dockerfile
     ports:
         - "80:80"
+    networks:
+      - server-network
+  
   nexus:
     image: sonatype/nexus3
     container_name: "nexus"
-    command: ["sh", "-c", "chown -R 200:200 ./nexus-data"]
     volumes:
       - "./nexus-data:/nexus-data"
     ports:
       - "8081:8081"
       - "8123:8123"
+    networks:
+      - server-network
+  
+  jenkins:
+    image: jenkins/jenkins:lts
+    container_name: "jenkins"
+    volumes:
+      - "./jenkins/data:/var/jenkins_home"
+    ports:
+      - "8080:8080"
+      - "50000:50000"
+    networks:
+      - server-network
+
+  postgresql:
+    image: postgres
+    container_name: "postgresql"
+    volumes:
+      - "./gogs/postgresql/data:/var/lib/postgresql/data"
+    environment:
+      - POSTGRE_PASSWORD=gogs
+      - POSTGRE_USER=gogs
+      - POSTGRE_DB=gogs
+    ports:
+      - "5432:5432"
+    networks:
+      - server-network
+
+  gogs:
+    image: gogs/gogs
+    container_name: "gogs"
+    volumes:
+      - "./gogs/data:/data"
+    ports:
+      - "10022:22"
+      - "3000:3000"
+    networks:
+      - server-network
+
 networks:
-  front:
+  server-network:
     driver: bridge
-    ipam:
-      driver: default
